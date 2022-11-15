@@ -1,5 +1,6 @@
 name: CAPJu Service-User CI
-on: [push]
+on:
+  workflow_dispatch:
 
 env:
   JWT_SECRET: testestestesteste
