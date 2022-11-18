@@ -12,7 +12,7 @@ on:
 
 jobs:
   staticCheck:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -25,7 +25,7 @@ jobs:
 
   test:
     needs: staticCheck
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - name: Install dependencies
@@ -38,7 +38,7 @@ jobs:
   sonarcloud:
     needs: test
     name: SonarCloud
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
         with:
