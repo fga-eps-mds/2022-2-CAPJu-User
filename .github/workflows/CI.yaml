@@ -22,8 +22,7 @@ jobs:
         run: npm i
       - name: Lint Analysis
         run: npm run lint
-      - name: dir
-        run: pwd
+
   test:
     needs: staticCheck
     runs-on: ubuntu-latest
