@@ -7,7 +7,8 @@
     "test": "jest --runInBand --coverage",
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "prettier": "prettier . -w"
+    "lint": "eslint src --ext .js",
+    "prettier": "prettier --check ."
   },
   "license": "MIT",
   "dependencies": {

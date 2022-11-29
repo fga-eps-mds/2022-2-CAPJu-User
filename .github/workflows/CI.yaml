@@ -1,36 +1,50 @@
 name: CAPJu Service-User CI
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - 'refeactor/**'
+      - 'hotfix/**'
+      - 'feature/**'
+  pull_request:
+    types: [opened, synchronize, reopened]
 
-env:
-  JWT_SECRET: testestestesteste
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  staticCheck:
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
-      - name: Download dependencies
-        run: cd src && yarn && cd ..
-      - name: Check code style
-        run: cd src && yarn prettier --check . && cd ..
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - name: Install Dependencies
+        run: npm i
       - name: Lint Analysis
-        run: cd src && yarn eslint . && cd ..
+        run: npm run lint
+
+  test:
+    needs: staticCheck
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm i
       - name: Tests
-        run: yarn test
+        run: npm run test
+      - name: ver se arquivo foi criado
+        run: ls && cd coverage && ls
+
   sonarcloud:
+    needs: test
     name: SonarCloud
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Install dependencies
-        run: yarn
-      - name: test and coverage
-        run: yarn test
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
