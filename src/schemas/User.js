@@ -21,6 +21,7 @@ const UserSchema = new Schema(
       type: Number,
     },
     unity: String,
+    cpf: String,
   },
   {
     timestamps: true,

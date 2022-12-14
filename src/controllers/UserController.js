@@ -6,12 +6,13 @@ import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import { sha256 } from "js-sha256";
 import Unity from "../schemas/Unity.js";
+import ValidateCPF from "../validators/ValidateCPF.js"
 
 class UserController {
   async createUser(req, res) {
     try {
       //cria nome
-      const { name, email, password, role, unity } =
+      const { name, email, password, role, unity, cpf } =
         await UserValidator.validateAsync(req.body);
       //ve se o email existe
       const EmailAlreadyExist = await User.findOne({
@@ -19,6 +20,9 @@ class UserController {
       });
       if (EmailAlreadyExist) {
         return res.status(400).json({ message: "Email ja existe!" });
+      }
+      if(!ValidateCPF(cpf)){
+        return res.status(400).json({ message: "CPF inválido!" });
       }
 
       const existingUnity = await Unity.findOne({
@@ -37,6 +41,7 @@ class UserController {
         password: hashedPassword,
         role,
         unity,
+        cpf,
       });
       if (user) {
         return res.status(200).json({
@@ -45,6 +50,7 @@ class UserController {
           role: user.role,
           unity: user.unity,
           email: user.email,
+          cpf: user.cpf,
           token: generateToken(user._id),
         });
       } else {
