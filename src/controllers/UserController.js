@@ -18,9 +18,17 @@ class UserController {
       const EmailAlreadyExist = await User.findOne({
         email,
       });
+      const CPFAlreadyExist = await User.findOne({
+        cpf,
+      })
       if (EmailAlreadyExist) {
         return res.status(400).json({ message: "Email ja existe!" });
       }
+
+      if (CPFAlreadyExist) {
+        return res.status(400).json({ message: "CPF ja existe!" });
+      }
+
       if(!ValidateCPF(cpf)){
         return res.status(400).json({ message: "CPF inválido!" });
       }
