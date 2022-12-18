@@ -1,34 +1,40 @@
-function ValidateCPF(strCPF) {
-    let Soma;
-    let Resto;
-    let i;
-    Soma = 0;
-    strCPF = strCPF.replaceAll(".", "");
-    strCPF = strCPF.replaceAll("-", "");
-  if (strCPF == "00000000000") return false;
-  if (strCPF == "11111111111") return false;
-  if (strCPF == "22222222222") return false;
-  if (strCPF == "33333333333") return false;
-  if (strCPF == "44444444444") return false;
-  if (strCPF == "55555555555") return false;
-  if (strCPF == "66666666666") return false;
-  if (strCPF == "77777777777") return false;
-  if (strCPF == "88888888888") return false;
-  if (strCPF == "99999999999") return false;
+export default function validateCPF(cpf) {
+  let sum = 0;
+  let rest;
+  cpf = cpf.replace(/\D/g, '');
 
-  for (i=1; i<=9; i++) Soma = Soma + parseInt(strCPF.substring(i-1, i)) * (11 - i);
-  Resto = (Soma * 10) % 11;
+  const cpfBlocked = [
+    '00000000000',
+    '11111111111',
+    '22222222222',
+    '33333333333',
+    '44444444444',
+    '55555555555',
+    '66666666666',
+    '77777777777',
+    '88888888888',
+    '99999999999'
+  ];
 
-    if ((Resto == 10) || (Resto == 11))  Resto = 0;
-    if (Resto != parseInt(strCPF.substring(9, 10)) ) return false;
+  if (cpfBlocked.includes(cpf)) {
+    return false;
+  }
 
-  Soma = 0;
-    for (i = 1; i <= 10; i++) Soma = Soma + parseInt(strCPF.substring(i-1, i)) * (12 - i);
-    Resto = (Soma * 10) % 11;
+  for (let i = 1; i <= 9; i++) {
+    sum = sum + parseInt(cpf.substring(i - 1, i)) * (11 - i);
+  }
+  rest = (sum * 10) % 11;
 
-    if ((Resto == 10) || (Resto == 11))  Resto = 0;
-    if (Resto != parseInt(strCPF.substring(10, 11) ) ) return false;
-    return true;
+  if (rest == 10 || rest == 11) rest = 0;
+  if (rest != parseInt(cpf.substring(9, 10))) return false;
+
+  sum = 0;
+  for (let i = 1; i <= 10; i++) {
+    sum = sum + parseInt(cpf.substring(i - 1, i)) * (12 - i);
+  }
+  rest = (sum * 10) % 11;
+
+  if (rest == 10 || rest == 11) rest = 0;
+  if (rest != parseInt(cpf.substring(10, 11))) return false;
+  return true;
 }
-
-export default ValidateCPF
