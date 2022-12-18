@@ -39,7 +39,14 @@ class UserController {
       if (!existingUnity) {
         return res.status(404).json({ message: "Unidade não encontrada" });
       }
-
+      
+      const fullName =
+        /\b[A-Za-zÀ-ú][A-Za-zÀ-ú]+,?\s[A-Za-zÀ-ú][A-Za-zÀ-ú]{2,19}\b/gi;
+      
+      if (!fullName.test(name)) {
+        return res.status(400).json({ message: "O nome precisa conter um sobrenome"});
+      }
+      
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
       //cria novo array de user
