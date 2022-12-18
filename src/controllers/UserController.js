@@ -132,9 +132,9 @@ class UserController {
 
   async login(req, res) {
     try {
-      const { email, password } = req.body;
-      // Check for user email
-      const user = await User.findOne({ email: email.toString() });
+      const { cpf, password } = req.body;
+      // Check for user cpf
+      const user = await User.findOne({ cpf: cpf.toString() });
       if (!user)
         return res.status(401).json({ message: "o usuário não existe" });
       if (!user.accepted) {
@@ -150,6 +150,7 @@ class UserController {
           _id: user.id,
           name: user.name,
           email: user.email,
+          cpf: user.cpf,
           token: generateToken(user._id),
           expiresIn,
         });
