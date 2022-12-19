@@ -9,7 +9,6 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
-
 jobs:
   staticCheck:
     runs-on: ubuntu-22.04
