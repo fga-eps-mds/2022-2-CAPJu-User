@@ -12,7 +12,7 @@ routes.post("/newUser", UserController.createUser);
 routes.get(
   "/allUser",
   protect,
-  authRole([ROLE.DIRETOR]),
+  authRole([ROLE.DIRETOR, ROLE.JUIZ]),
   UserController.allUser
 );
 routes.post("/login", UserController.login);
