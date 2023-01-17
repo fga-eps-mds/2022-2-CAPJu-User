@@ -8,7 +8,7 @@ import path from 'path';
 config();
 
 mongoose
-  .connect(process.env.MONGODB_URI || "mongodb://localhost:27017")
+  .connect(process.env.MONGODB_URI )
   .then(() => {
     console.log("Connected to DB!");
   })
