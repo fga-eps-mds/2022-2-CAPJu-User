@@ -7,6 +7,7 @@ export const UserValidator = Joi.object({
   password: Joi.string().required(),
   role: Joi.number().required().valid(...Object.values(ROLE)),
   unity: Joi.string().required(),
+  cpf: Joi.string().required(),
 });
 
 export const UserEditRoleValidator = Joi.object({

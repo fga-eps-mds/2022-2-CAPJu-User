@@ -6,19 +6,31 @@ import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import { sha256 } from "js-sha256";
 import Unity from "../schemas/Unity.js";
+import ValidateCPF from "../validators/ValidateCPF.js"
 
 class UserController {
   async createUser(req, res) {
     try {
       //cria nome
-      const { name, email, password, role, unity } =
+      const { name, email, password, role, unity, cpf } =
         await UserValidator.validateAsync(req.body);
       //ve se o email existe
       const EmailAlreadyExist = await User.findOne({
         email,
       });
+      const CPFAlreadyExist = await User.findOne({
+        cpf,
+      })
       if (EmailAlreadyExist) {
         return res.status(400).json({ message: "Email ja existe!" });
+      }
+
+      if (CPFAlreadyExist) {
+        return res.status(400).json({ message: "CPF ja existe!" });
+      }
+
+      if(!ValidateCPF(cpf)){
+        return res.status(400).json({ message: "CPF inválido!" });
       }
 
       const existingUnity = await Unity.findOne({
@@ -27,7 +39,14 @@ class UserController {
       if (!existingUnity) {
         return res.status(404).json({ message: "Unidade não encontrada" });
       }
-
+      
+      const fullName =
+        /\b[A-Za-zÀ-ú][A-Za-zÀ-ú]+,?\s[A-Za-zÀ-ú][A-Za-zÀ-ú]{2,19}\b/gi;
+      
+      if (!fullName.test(name)) {
+        return res.status(400).json({ message: "O nome precisa conter um sobrenome"});
+      }
+      
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
       //cria novo array de user
@@ -37,6 +56,7 @@ class UserController {
         password: hashedPassword,
         role,
         unity,
+        cpf,
       });
       if (user) {
         return res.status(200).json({
@@ -45,6 +65,7 @@ class UserController {
           role: user.role,
           unity: user.unity,
           email: user.email,
+          cpf: user.cpf,
           token: generateToken(user._id),
         });
       } else {
@@ -118,9 +139,9 @@ class UserController {
 
   async login(req, res) {
     try {
-      const { email, password } = req.body;
-      // Check for user email
-      const user = await User.findOne({ email: email.toString() });
+      const { cpf, password } = req.body;
+      // Check for user cpf
+      const user = await User.findOne({ cpf: cpf.toString() });
       if (!user)
         return res.status(401).json({ message: "o usuário não existe" });
       if (!user.accepted) {
@@ -136,6 +157,7 @@ class UserController {
           _id: user.id,
           name: user.name,
           email: user.email,
+          cpf: user.cpf,
           token: generateToken(user._id),
           expiresIn,
         });
